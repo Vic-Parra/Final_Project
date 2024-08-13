@@ -1,0 +1,144 @@
+﻿@using MySqlConnector;
+@page "/contact"
+
+<!-- page title -->
+<h1 style="text-align: center; text-decoration: underline; font-weight: bold;">CONTACT</h1>
+
+<!-- Subtitle message -->
+<p style="text-align:center">If you would like to contact me, fill out this form and I will contact you as soon as possible!</p>
+
+<!-- ~~~ Form starts ~~~ -->
+
+<!-- name input -->
+<p>
+    <div class="row">
+        <div class="col-md-3">
+            <label style="font-weight: bold;">Enter your name:</label>
+        </div>
+        <div class="col-md-4">
+            <input placeholder="John Doe" @bind="@name" class="form-control" />
+        </div>
+    </div>
+</p>
+
+<!-- company input -->
+<p>
+    <div class="row">
+        <div class="col-md-3">
+            <label style="font-weight: bold;">Enter your company's name:'</label>
+        </div>
+        <div class="col-md-4">
+            <input placeholder="X Inc." @bind="@company" class="form-control" />
+        </div>
+    </div>
+</p>
+
+<!-- phone input -->
+<p>
+    <div class="row">
+        <div class="col-md-3">
+            <label style="font-weight: bold;">Enter your phone number:</label>
+        </div>
+        <div class="col-md-4">
+            <input placeholder="(123) 456 - 7890" @bind="@phoneNumber" class="form-control" />
+        </div>
+    </div>
+</p>
+
+<!-- email input -->
+<p>
+    <div class="row">
+        <div class="col-md-3">
+            <label style="font-weight: bold;">Enter your email:</label>
+        </div>
+        <div class="col-md-4">
+            <input placeholder="youremail@email.com" @bind="@email" class="form-control" />
+        </div>
+    </div>
+</p>
+
+<!-- message input -->
+<p>
+    <div class="row">
+        <div class="col-md-3">
+            <label style="font-weight: bold;">Enter a message (optional):</label>
+        </div>
+        <div class="col-md-4">
+            <input placeholder="Your message" @bind="@message" class="form-control" />
+        </div>
+    </div>
+</p>
+
+<!-- ~~~ Buttons Start ~~~ -->
+
+<!-- Submit Button -->
+<p>
+    <div class="col-md-2">
+        <button @onclick="Submit" class="btn btn-outline-success">Submit</button>
+    </div>
+</p>
+<!-- Clear Button -->
+<p>
+    <div class="col-md-2">
+        <button @onclick="Clear" class="btn btn-outline-danger">Clear</button>
+    </div>
+</p>
+@code {
+    // variables for form input
+    string name;
+    string company;
+    string phoneNumber;
+    string email;
+    string message;
+
+    // submit button function
+    void Submit()
+    {
+        MySqlConnectionStringBuilder builder =
+              new MySqlConnectionStringBuilder
+                  {
+                      // Set the server address to "localhost"
+                      Server = "localhost",
+                      // Set the user ID to "root"
+                      UserID = "root",
+                      // Set the password to "password"
+                      Password = "password",
+                      // Set the database name to "demo1"
+                      Database = "final",
+                  };
+        MySqlConnection connection = new MySqlConnection(builder.ConnectionString);
+
+        connection.Open(); //open sql connection
+
+        string sql = "INSERT INTO `contacts` (`name`, `company`, `phoneNumber`, `email`, `message`) " +
+                         "VALUES (@name, @company, @phoneNumber, @mail, @message)";
+
+        using (MySqlCommand command = new MySqlCommand(sql, connection))
+        {
+            // Adding parameters to the command
+            command.Parameters.AddWithValue("@name", name);
+            command.Parameters.AddWithValue("@company", company);
+            command.Parameters.AddWithValue("@phoneNumber", phoneNumber);
+            command.Parameters.AddWithValue("@mail", email);
+            command.Parameters.AddWithValue("@message", message);
+
+            // Executing the command
+            command.ExecuteNonQuery();
+        }
+
+
+
+        connection.Close(); //sql connection closed
+    }
+
+    // clear button function
+    void Clear()
+    {
+        // make all fields empty strings
+        name = "";
+        company = "";
+        phoneNumber = "";
+        email = "";
+        message = "";
+    }
+}
